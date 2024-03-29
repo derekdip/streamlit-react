@@ -1,0 +1,27 @@
+#CHATGPT generated all of this except a little tweak 
+#however i do understand whats going on just wouldn't be able to make this on my own
+#when you run 'docker-compose up --build' it goes to this .yml file and the file then runs the react and streamlit dockerfiles together
+version: '3'
+
+services:
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    ports:
+      - "3001:3001" #<- lil tweak here
+    volumes: #<- for fast development instead of having to rebuild whenever you want to see a change
+      - ./streamlit_app/frontend/src:/app/src  # Mount local frontend directory into container
+      - ./streamlit_app/frontend/public:/app/public  # Mount local frontend directory into container
+      - /app/frontend/node_modules  # Mount node_modules as volume (optional for faster development)
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    volumes: #<- for fast development instead of having to rebuild whenever you want to see a change
+      - ./streamlit_app/Landing.py:/app/streamlit_app/Landing.py  # Mount local backend directory into container
+      - ./streamlit_app/__init__.py:/app/streamlit_app/__init__.py  # Mount local backend directory into container
+      - ./streamlit_app/pages:/app/streamlit_app/pages  # Mount local backend directory into container
